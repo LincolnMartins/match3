@@ -199,7 +199,7 @@ public class Board : MonoBehaviour
     //Preenche os espaços vazios do grid
     private IEnumerator FillEmptyTiles()
     {
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.8f);
 
         foreach (var tile in Tiles)
         {
@@ -216,7 +216,7 @@ public class Board : MonoBehaviour
             StartCoroutine(Fall(tile, 0.2f));
         }
 
-        yield return new WaitForSeconds(.3f);
+        yield return new WaitForSeconds(.4f);
         SearchForNewMatches();
     }
 

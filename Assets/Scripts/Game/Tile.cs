@@ -49,6 +49,7 @@ public class Tile : MonoBehaviour
         pieceObj.name = "Piece ("+x+","+y+")";
     }
 
+    // Update is called once per frame
     void Update()
     {
         //Movimenta a peça caso o tile inferior esteja vazio
