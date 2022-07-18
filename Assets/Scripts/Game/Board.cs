@@ -119,18 +119,7 @@ public class Board : MonoBehaviour
             yield return null;
         }
 
-        //troca as peças de lugar na hierarquia da cena
-        var tmp1 = tile2.pieceObj;        
-        tile2.pieceObj = tile1.pieceObj;        
-        tile1.pieceObj = tmp1;
-
-        tile1.pieceObj.transform.SetParent(tile1.transform);
-        tile2.pieceObj.transform.SetParent(tile2.transform);
-
-        //troca os metadados dos tiles
-        var tmp2 = tile1.piece;
-        tile1.piece = tile2.piece;
-        tile2.piece = tmp2;
+        ChangePieces(tile1, tile2);
 
         //Verifica o match, caso nao haja um match retorna as peças pro lucar
         if(CanMatch(tile1, tile2)) Match();
@@ -142,6 +131,22 @@ public class Board : MonoBehaviour
         }
 
         _selection.Clear(); //Limpa seleção de peças
+    }
+
+    //troca as peças de lugar na hierarquia da cena
+    public void ChangePieces(Tile tile1, Tile tile2)
+    {
+        tile1.pieceObj.transform.SetParent(tile2.transform);
+        tile2.pieceObj.transform.SetParent(tile1.transform);
+        
+        var tmp1 = tile2.pieceObj;
+        tile2.pieceObj = tile1.pieceObj;
+        tile1.pieceObj = tmp1;
+        
+        //troca os metadados dos tiles
+        var tmp2 = tile1.piece;
+        tile1.piece = tile2.piece;
+        tile2.piece = tmp2;
     }
 
     //Verifica de os tiles selecionados podem dar match ou não após serem movidos
@@ -172,8 +177,8 @@ public class Board : MonoBehaviour
                 matchSound.Play(); //reproduz som de match
             }
         }
-
-        StartCoroutine(RefillBoard());
+        
+        StartCoroutine(FillEmptyTiles());
     }
 
     //Destroi as peças do grid
@@ -191,67 +196,11 @@ public class Board : MonoBehaviour
         tile.isEmpty = true;
     }
 
-    //Ajusta as peças nas colunas do grid
-    private IEnumerator RefillBoard()
-    {
-        yield return new WaitForSeconds(.2f);
-
-        var count = 0;
-        for (int x = Width-1; x >= 0; x--)
-        {
-            for (int y = Height-1; y >= 0; y--)
-            {
-                //verifica se o tile está vazio
-                if(Tiles[x,y].isEmpty) count++; //se a peça estiver inativa adiciona +1 ao contador
-                else if(count > 0)
-                {
-                    MoveDown(new Vector2(x,y), count, 1000); // se o tile nao estiver vazio move a peça o numero de casas vazias que houve abaixo
-                    yield return null;
-                }
-            }
-
-            count = 0;
-        }
-        
-        yield return FillEmptyTiles();
-    }
-
-    // move as peças para o tile inferior
-    private void MoveDown(Vector2 initialpos, int tilecount, float time)
-    {
-        int count = 0;
-        while(count < tilecount)
-        {
-            var tile = Tiles[(int)initialpos.x,(int)initialpos.y+count];
-            if(tile.Bottom == null) continue;
-            
-            //move a peça
-            for (float t = 0; t <= 1*time; t += Time.deltaTime)
-                tile.pieceObj.transform.position = Vector2.Lerp(tile.pieceObj.transform.position, tile.Bottom.transform.position, t/time);
-
-            tile.pieceObj.transform.SetParent(tile.Bottom.gameObject.transform);
-            tile.Bottom.pieceObj.transform.SetParent(tile.gameObject.transform);
-
-            //troca as peças de lugar na hierarquia da cena
-            var tmp1 = tile.Bottom.pieceObj;
-            tile.Bottom.pieceObj = tile.pieceObj;
-            tile.pieceObj = tmp1;
-            
-            //troca os metadados dos tiles
-            var tmp2 = tile.piece;
-            tile.piece = tile.Bottom.piece;
-            tile.Bottom.piece = tmp2;
-
-            tile.isEmpty = true;
-            tile.Bottom.isEmpty = false;
-
-            count++;
-        }
-    }
-
     //Preenche os espaços vazios do grid
     private IEnumerator FillEmptyTiles()
     {
+        yield return new WaitForSeconds(0.7f);
+
         foreach (var tile in Tiles)
         {
             if(!tile.isEmpty) continue;

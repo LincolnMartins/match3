@@ -49,6 +49,22 @@ public class Tile : MonoBehaviour
         pieceObj.name = "Piece ("+x+","+y+")";
     }
 
+    void Update()
+    {
+        //Movimenta a peça caso o tile inferior esteja vazio
+        if(Bottom != null && Bottom.isEmpty && !isEmpty)
+        {
+            if(pieceObj.transform.localPosition.y > -113)
+                pieceObj.transform.position = Vector2.Lerp(pieceObj.transform.position, Bottom.transform.position, 50*Time.deltaTime);
+            else //se a peça alcançou a posição almejada então troca-se a peça com a do tile inferior
+            {
+                Board.Instance.ChangePieces(this, Bottom); 
+                isEmpty = true;
+                Bottom.isEmpty = false;
+            }
+        }
+    }
+
     // Chamado quando jogador clica no tile
     public void Click()
     {
