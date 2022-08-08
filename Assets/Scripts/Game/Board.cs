@@ -121,7 +121,7 @@ public class Board : MonoBehaviour
 
         ChangePieces(tile1, tile2);
 
-        //Verifica o match, caso nao haja um match retorna as peças pro lucar
+        //Verifica o match, caso nao haja um match retorna as peças pro lugar
         if(CanMatch(tile1, tile2)) Match();
         else if(_selection.Count > 1)
         {
@@ -172,7 +172,7 @@ public class Board : MonoBehaviour
                 foreach (var tile in matchTiles)
                 {
                     Score += tile.piece.value;
-                    StartCoroutine(DestroyPiece(tile, 0.2f));
+                    StartCoroutine(DestroyPiece(tile, 0.4f));
                 }
                 matchSound.Play(); //reproduz som de match
             }
@@ -199,7 +199,7 @@ public class Board : MonoBehaviour
     //Preenche os espaços vazios do grid
     private IEnumerator FillEmptyTiles()
     {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(1);
 
         foreach (var tile in Tiles)
         {
@@ -213,7 +213,7 @@ public class Board : MonoBehaviour
             tile.pieceObj.SetActive(true);
             
             //move a peça até o tile
-            StartCoroutine(Fall(tile, 0.2f));
+            StartCoroutine(Fall(tile, 0.25f));
         }
 
         yield return new WaitForSeconds(.4f);
